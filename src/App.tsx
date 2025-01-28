@@ -6,7 +6,7 @@ import type { Verse, User } from './types';
 import { generateUUID } from './utils/uuid';
 
 // Move to environment variables in production
-const STORAGE_KEY = 'scripture_memory_data';
+const STORAGE_KEY = 'charlotte_data';
 
 function App() {
   const [user, setUser] = useState<User>({
