@@ -8,30 +8,29 @@ import type { Verse, User } from './types';
 const STORAGE_KEY = 'scripture_memory_data';
 
 function App() {
-  const [user, setUser] = useState<User>(() => {
-    const savedData = localStorage.getItem(STORAGE_KEY);
-    if (savedData) {
-      const { user } = JSON.parse(savedData);
-      return user;
-    }
-    return {
-      id: crypto.randomUUID(),
-      name: 'Guest User',
-      streak: 0,
-      lastPracticeDate: null,
-    };
+  const [user, setUser] = useState<User>({
+    id: crypto.randomUUID(),
+    name: 'Guest User',
+    streak: 0,
+    lastPracticeDate: null,
   });
 
-  const [verses, setVerses] = useState<Verse[]>(() => {
-    const savedData = localStorage.getItem(STORAGE_KEY);
-    if (savedData) {
-      const { verses } = JSON.parse(savedData);
-      return verses;
-    }
-    return [];
-  });
-
+  const [verses, setVerses] = useState<Verse[]>([]);
   const [isPracticing, setIsPracticing] = useState(false);
+
+  // Load data from localStorage
+  useEffect(() => {
+    try {
+      const savedData = localStorage.getItem(STORAGE_KEY);
+      if (savedData) {
+        const parsed = JSON.parse(savedData);
+        if (parsed.user) setUser(parsed.user);
+        if (parsed.verses) setVerses(parsed.verses);
+      }
+    } catch (error) {
+      console.error('Failed to load data from localStorage:', error);
+    }
+  }, []);
 
   // Persist data
   useEffect(() => {
@@ -45,7 +44,7 @@ function App() {
       const lastPractice = new Date(user.lastPracticeDate);
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
-      
+
       if (lastPractice.toLocaleDateString() === yesterday.toLocaleDateString()) {
         setUser(prev => ({
           ...prev,
@@ -62,7 +61,7 @@ function App() {
   }, []);
 
   const currentDate = new Date();
-  
+
   const todaysVerses = verses.filter(verse => {
     const dayOfMonth = currentDate.getDate();
     const dayOfWeek = currentDate.getDay();
@@ -70,7 +69,7 @@ function App() {
 
     return (
       verse.bucket === 'daily' ||
-      (verse.bucket === 'oddEven' && 
+      (verse.bucket === 'oddEven' &&
         ((isOddDay && verse.bucketPosition === 1) || (!isOddDay && verse.bucketPosition === 2))) ||
       (verse.bucket === 'daysOfWeek' && verse.bucketPosition === dayOfWeek) ||
       (verse.bucket === 'datesOfMonth' && verse.bucketPosition === dayOfMonth)
@@ -91,7 +90,7 @@ function App() {
 
   const handlePracticeComplete = (results: { verseId: string; mastered: boolean }[]) => {
     const today = new Date().toLocaleDateString();
-    
+
     setVerses(prev => prev.map(verse => {
       const result = results.find(r => r.verseId === verse.id);
       if (!result) return verse;
@@ -160,16 +159,16 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header 
-        user={user} 
+      <Header
+        user={user}
         onUpdateProfile={handleUpdateProfile}
         onReset={handleReset}
       />
-      
+
       <main className="container mx-auto px-4 py-6 sm:py-8 max-w-3xl">
         {isPracticing ? (
-          <DailyPractice 
-            verses={todaysVerses} 
+          <DailyPractice
+            verses={todaysVerses}
             onComplete={handlePracticeComplete}
           />
         ) : (
@@ -185,8 +184,8 @@ function App() {
                 </button>
               )}
             </div>
-            <VerseBuckets 
-              verses={verses} 
+            <VerseBuckets
+              verses={verses}
               currentDate={currentDate}
               onAddVerse={handleAddVerse}
             />
@@ -197,4 +196,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
