@@ -167,6 +167,13 @@ function App() {
       />
 
       <main className="container mx-auto px-4 py-6 sm:py-8 max-w-3xl">
+        <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4 text-blue-700">
+          <p>
+            🚧 Charlotte is currently in alpha and under active development. We welcome contributions!
+            Please visit our <a href="https://github.com/justuseapen/charlotte" className="underline hover:text-blue-800">GitHub repository</a> to get involved.
+          </p>
+        </div>
+
         {isPracticing ? (
           <DailyPractice
             verses={todaysVerses}
