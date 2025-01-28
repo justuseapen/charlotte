@@ -9,7 +9,7 @@ const STORAGE_KEY = 'scripture_memory_data';
 
 function App() {
   const [user, setUser] = useState<User>({
-    id: crypto.randomUUID(),
+    id: window.crypto.randomUUID(),
     name: 'Guest User',
     streak: 0,
     lastPracticeDate: null,
@@ -79,7 +79,7 @@ function App() {
   const handleAddVerse = (verseData: Omit<Verse, 'id' | 'dateAdded' | 'mastered' | 'bucket'>) => {
     const newVerse: Verse = {
       ...verseData,
-      id: crypto.randomUUID(),
+      id: window.crypto.randomUUID(),
       dateAdded: new Date().toISOString(),
       mastered: false,
       bucket: 'daily',
