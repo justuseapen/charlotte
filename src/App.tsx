@@ -3,13 +3,14 @@ import { Header } from './components/Header';
 import { DailyPractice } from './components/DailyPractice';
 import { VerseBuckets } from './components/VerseBuckets';
 import type { Verse, User } from './types';
+import { generateUUID } from './utils/uuid';
 
 // Move to environment variables in production
 const STORAGE_KEY = 'scripture_memory_data';
 
 function App() {
   const [user, setUser] = useState<User>({
-    id: window.crypto.randomUUID(),
+    id: generateUUID(),
     name: 'Guest User',
     streak: 0,
     lastPracticeDate: null,
@@ -79,7 +80,7 @@ function App() {
   const handleAddVerse = (verseData: Omit<Verse, 'id' | 'dateAdded' | 'mastered' | 'bucket'>) => {
     const newVerse: Verse = {
       ...verseData,
-      id: window.crypto.randomUUID(),
+      id: generateUUID(),
       dateAdded: new Date().toISOString(),
       mastered: false,
       bucket: 'daily',
